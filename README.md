@@ -63,7 +63,7 @@ The first time, macOS asks for a few permissions. Allow them all:
 | Notifications | To tell you when the song is in |
 | *Run Shell Script* / *Run AppleScript* in Shortcuts | The shortcut is made of these steps. If Shortcuts says scripts aren't allowed, turn on **Shortcuts → Settings → Advanced → Allow Running Scripts**. |
 
-The first run also installs its tools in `~/Library/Application Support/HearItOwnIt`,
+The first run also installs its tools in `~/Library/Application Support/GrandTheftAudio`,
 which takes a few minutes. A notification tells you when it's done.
 
 ## Use
@@ -161,7 +161,7 @@ Each time it runs, the shortcut reinstalls its scripts if the ones packed inside
 Delete the shortcut in the Shortcuts app, then:
 
 ```bash
-rm -rf ~/Library/Application\ Support/HearItOwnIt ~/Library/Caches/HearItOwnIt
+rm -rf ~/Library/Application\ Support/GrandTheftAudio ~/Library/Caches/GrandTheftAudio
 ```
 
 Your songs stay in Music and in `~/Music/YoutubeDownloads`. To remove Hear it Later, see

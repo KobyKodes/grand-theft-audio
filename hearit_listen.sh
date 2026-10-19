@@ -20,10 +20,10 @@ if [[ -f "$dev/hearit.sh" ]]; then
       mv -f "$tmp" "$app/ytprogress" ) < /dev/null > /dev/null 2>&1 &
   fi
 else
-  app="$HOME/Library/Application Support/HearItOwnItRedesign"
+  app="$HOME/Library/Application Support/GrandTheftAudio"
 fi
 
-dir="$HOME/Library/Caches/HearItOwnItRedesign"
+dir="$HOME/Library/Caches/GrandTheftAudio"
 mkdir -p "$dir"
 rm -f "$dir/current"
 find "$dir" -name 'hud.*' -mtime +1 -delete 2> /dev/null

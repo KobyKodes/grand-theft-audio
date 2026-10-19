@@ -4,7 +4,7 @@
 #
 # - On the Mac these scripts were written on (~/Developer/Projects/Grand Theft Audio/hearit.sh
 #   exists), uses those files and only recompiles the AppleScript if it changed.
-# - Anywhere else, unpacks the scripts into ~/Library/Application Support/HearItOwnIt
+# - Anywhere else, unpacks the scripts into ~/Library/Application Support/GrandTheftAudio
 #   and, the first time, installs Python + yt-dlp + ffmpeg + deno there with uv.
 #   No Homebrew, no Xcode tools, no password.
 set -euo pipefail
@@ -17,7 +17,7 @@ if [[ -f "$dev/hearit.sh" ]]; then
   app="$dev"
   cat > /dev/null
 else
-  app="$HOME/Library/Application Support/HearItOwnItRedesign"
+  app="$HOME/Library/Application Support/GrandTheftAudio"
   mkdir -p "$app"
   bundle="$(mktemp -t hearit)"
   trap 'rm -f "$bundle"' EXIT

@@ -6,7 +6,7 @@ property scriptDir : ""
 property hudFile : "" -- the orb window the Shortcut opened while Shazam listened, or ""
 property noPlaylist : "No playlist"
 property newPlaylist : "New playlist…"
-property shortcutName : "Grand Theft Audio (Redesign)" -- what the window's "Try again" runs
+property shortcutName : "Grand Theft Audio" -- what the window's "Try again" runs
 
 -- argv: {input} or {input, folder with the scripts} (the launcher passes the folder)
 -- or {"Artist|Title", folder, playlist} from hearit_queue.sh ("" or "No playlist" = none)
@@ -39,9 +39,11 @@ on runSong(argv)
 	-- playlist picked on the phone as a 3rd argument. Run from the Shortcut, start the
 	-- queue so anything still waiting downloads too.
 	set queuedPlaylist to missing value
-	-- This redesign copy never starts the queue itself, so only the original processes
-	-- songs from the iPhone.
-	if (count of argv) ≥ 3 then set queuedPlaylist to item 3 of argv
+	if (count of argv) ≥ 3 then
+		set queuedPlaylist to item 3 of argv
+	else
+		startQueue()
+	end if
 
 	-- 1) Read the Shazam result
 	set songArtist to ""
@@ -271,7 +273,7 @@ end addToPlaylists
 -- Starts hearit_queue.sh (songs saved by the "Hear it Later" iPhone shortcut) in the
 -- background. Without it (Hear it Later not set up), this does nothing.
 on startQueue()
-	set q to quoted form of (scriptDir & "/hearit_queue.sh")
+	set q to quoted form of (scriptDir & "/hear-it-later/hearit_queue.sh")
 	do shell script "if [ -x " & q & " ]; then " & q & " > /dev/null 2>&1 & fi"
 end startQueue
 
@@ -279,7 +281,7 @@ end startQueue
 -- The orb window's file from hearit_listen.sh, or "" if there's none or it has closed.
 -- Claims it, so a later run can't pick up the same window.
 on takeHud()
-	set cur to quoted form of ((POSIX path of (path to home folder)) & "Library/Caches/HearItOwnItRedesign/current")
+	set cur to quoted form of ((POSIX path of (path to home folder)) & "Library/Caches/GrandTheftAudio/current")
 	try
 		return do shell script "f=$(cat " & cur & " 2>/dev/null); rm -f " & cur & "; if [ -n \"$f\" ] && [ -f \"$f.stop\" ]; then rm -f \"$f.stop\"; echo STOPPED; elif [ -n \"$f\" ] && [ -f \"$f\" ]; then echo \"$f\"; fi"
 	on error

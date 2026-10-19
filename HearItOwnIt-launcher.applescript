@@ -6,7 +6,7 @@ on run {input, parameters}
 	try
 		do shell script "test -f " & quoted form of (appDir & "/hearit.sh")
 	on error
-		set appDir to homeDir & "Library/Application Support/HearItOwnItRedesign"
+		set appDir to homeDir & "Library/Application Support/GrandTheftAudio"
 	end try
 	return run script (POSIX file (appDir & "/HearItOwnIt.scpt")) with parameters {input, appDir}
 end run

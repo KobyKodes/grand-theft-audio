@@ -26,7 +26,7 @@ import uuid
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 COPIED = ["hearit.sh", "ytmusic.sh", "update_ytdlp.sh", "tag_m4a.py", "hearit.py", "find_python.sh", "ytprogress", "sounds/owned.wav", "sounds/owned2.wav"]
-OUT = os.path.join(HERE, "Grand Theft Audio (Redesign).shortcut")
+OUT = os.path.join(HERE, "Grand Theft Audio.shortcut")
 
 
 def read(name):

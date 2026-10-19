@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="thumbnail.png" alt="Hear it → Own it" width="420">
+  <img src="brand/thumbnail.png" alt="Grand Theft Audio" width="420">
 </p>
 
-# Hear it → Own it
+# Grand Theft Audio
 
 **Hear a song. It's in your Music library.**
 
@@ -25,7 +25,7 @@ Music app, in whichever playlists you pick, all while you keep doing what you we
 - **Keeps itself working.** No Homebrew needed: the first run installs everything it
   needs into its own folder. The YouTube downloader is updated weekly, and again
   automatically if a download fails.
-- **Optional iPhone companion.** [Hear it Later](docs/hear-it-later.md) Shazams a song on
+- **Optional iPhone companion.** [Hear it Later](hear-it-later/README.md) Shazams a song on
   your phone and your Mac downloads it into your library.
 
 ## Requirements
@@ -40,10 +40,10 @@ Music app, in whichever playlists you pick, all while you keep doing what you we
 ## Install
 
 ```bash
-git clone https://github.com/KobyKodes/hear-it-own-it.git
-cd hear-it-own-it
+git clone https://github.com/KobyKodes/grand-theft-audio.git
+cd grand-theft-audio
 python3 build_hearit_shortcut.py
-open "Hear it → Own it.shortcut"
+open "Grand Theft Audio.shortcut"
 ```
 
 Click **Add Shortcut**. That's it: the scripts are packed inside the shortcut, so you
@@ -69,12 +69,12 @@ which takes a few minutes. A notification tells you when it's done.
 ## Use
 
 1. Play the song near your Mac (or on it).
-2. Run **Hear it → Own it**: from the Shortcuts icon in the menu bar, from Spotlight, or
+2. Run **Grand Theft Audio**: from the Shortcuts icon in the menu bar, from Spotlight, or
    with a keyboard shortcut (Shortcuts app → open the shortcut → ⓘ → **Add Keyboard
    Shortcut**).
 3. The orb listens. When it knows the song, it shows the title and starts downloading.
 4. Pick playlists in the window while it downloads, or skip.
-5. A notification says **Heard it, now you own it**, and the song is in Music.
+5. A notification says **Clean getaway**, and the song is in Music.
 
 Songs are saved to `~/Music/YoutubeDownloads` and then added to Music. If Music's
 **Settings → Files → Copy files to Music Media folder when adding to library** is on,
@@ -91,7 +91,7 @@ Chrome login, and macOS asks once whether it may read Chrome's saved data: click
 Hear a song while you're out? Shazam it with the **Hear it Later** shortcut on your
 iPhone, pick a playlist, and your Mac downloads it, either right away over your home
 Wi-Fi or whenever it next sees the song in iCloud Drive. Setup is in
-[docs/hear-it-later.md](docs/hear-it-later.md).
+[hear-it-later/README.md](hear-it-later/README.md).
 
 ## More tools
 
@@ -102,8 +102,8 @@ installed (`brew install yt-dlp ffmpeg && pip3 install mutagen`).
 | --- | --- |
 | `./ytmusic.sh <youtube-url>` | Downloads one YouTube video as a tagged song (no Shazam). Set `YTMUSIC_DEST` to change the folder. |
 | `./hearit.sh "<artist>" "<title>"` | What the shortcut does after Shazam: find, download, tag. |
-| `./backfill_tags.py` | Adds album, track numbers, year and full-size covers to songs you downloaded before. Previews first; `--apply` writes, `--undo` reverts. |
-| `python3 make_chime.py` | Generates an alternative success sound. |
+| `./extras/backfill_tags.py` | Adds album, track numbers, year and full-size covers to songs you downloaded before. Previews first; `--apply` writes, `--undo` reverts. |
+| `python3 extras/make_chime.py` | Generates an alternative success sound in `sounds/`. |
 
 ## Troubleshooting
 
@@ -135,14 +135,17 @@ Shortcut ─┬─ hearit_setup.sh     unpack the scripts, install tools the fir
 
 | File | Role |
 | --- | --- |
-| `build_hearit_shortcut.py` | Builds and signs `Hear it → Own it.shortcut`, with every script packed inside |
+| `build_hearit_shortcut.py` | Builds and signs `Grand Theft Audio.shortcut`, with every script packed inside |
 | `HearItOwnIt.applescript` | The main flow: runs the download, asks for playlists, talks to Music |
 | `hearit.sh`, `hearit.py` | Finds the song on YouTube and applies Shazam's names and iTunes album info |
 | `ytmusic.sh`, `tag_m4a.py` | Downloads with yt-dlp, crops the cover, writes tags and lyrics, spots duplicates |
 | `update_ytdlp.sh` | Keeps yt-dlp current (weekly, and after a failed download) |
 | `ytprogress.swift` | The floating orb and progress window (AppKit, no dependencies) |
 | `hearit_setup.sh`, `find_python.sh` | First-run install with [uv](https://github.com/astral-sh/uv), and finding the tools |
-| `hearit_queue.sh`, `hearit_now.sh`, `install_hearit_queue.sh`, `build_hearit_later.py` | [Hear it Later](docs/hear-it-later.md) |
+| `hear-it-later/` | [Hear it Later](hear-it-later/README.md): the queue, the Wi-Fi fast lane, the agent installer and the iPhone shortcut builder |
+| `sounds/` | The success sounds (`owned.wav`, `owned2.wav`, alternating) |
+| `extras/` | `backfill_tags.py` and `make_chime.py` (see [More tools](#more-tools)) |
+| `brand/` | Logo files, icons and [usage guidelines](brand/GUIDELINES.md) |
 
 ## Development
 
@@ -162,7 +165,7 @@ rm -rf ~/Library/Application\ Support/HearItOwnIt ~/Library/Caches/HearItOwnIt
 ```
 
 Your songs stay in Music and in `~/Music/YoutubeDownloads`. To remove Hear it Later, see
-[its guide](docs/hear-it-later.md#uninstall).
+[its guide](hear-it-later/README.md#uninstall).
 
 ## Please note
 

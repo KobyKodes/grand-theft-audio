@@ -1,8 +1,8 @@
 #!/bin/bash
-# First step of the "Hear it → Own it" shortcut (Run Shell Script, input to stdin).
+# First step of the "Grand Theft Audio" shortcut (Run Shell Script, input to stdin).
 # stdin: base64 tar.gz of the scripts, embedded in the shortcut by build_hearit_shortcut.py.
 #
-# - On the Mac these scripts were written on (~/Developer/Projects/Hear it, Own it/hearit.sh
+# - On the Mac these scripts were written on (~/Developer/Projects/Grand Theft Audio/hearit.sh
 #   exists), uses those files and only recompiles the AppleScript if it changed.
 # - Anywhere else, unpacks the scripts into ~/Library/Application Support/HearItOwnIt
 #   and, the first time, installs Python + yt-dlp + ffmpeg + deno there with uv.
@@ -10,14 +10,14 @@
 set -euo pipefail
 export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
-notify() { osascript -e "display notification \"$1\" with title \"Hear it → Own it\"" >/dev/null 2>&1 || true; }
+notify() { osascript -e "display notification \"$1\" with title \"Grand Theft Audio\"" >/dev/null 2>&1 || true; }
 
-dev="$HOME/Developer/Projects/Hear it, Own it"
+dev="$HOME/Developer/Projects/Grand Theft Audio"
 if [[ -f "$dev/hearit.sh" ]]; then
   app="$dev"
   cat > /dev/null
 else
-  app="$HOME/Library/Application Support/HearItOwnIt"
+  app="$HOME/Library/Application Support/HearItOwnItRedesign"
   mkdir -p "$app"
   bundle="$(mktemp -t hearit)"
   trap 'rm -f "$bundle"' EXIT

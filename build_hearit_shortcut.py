@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds "Hear it → Own it.shortcut" with every script packed inside it.
+"""Builds "Grand Theft Audio.shortcut" with every script packed inside it.
 
 Run after changing any of the scripts. HearItOwnIt.applescript ships compiled run-only.
 The progress window (ytprogress.swift) is compiled here when it's missing or out of
@@ -25,8 +25,8 @@ import tempfile
 import uuid
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-COPIED = ["hearit.sh", "ytmusic.sh", "update_ytdlp.sh", "tag_m4a.py", "hearit.py", "find_python.sh", "ytprogress", "owned.wav", "owned2.wav"]
-OUT = os.path.join(HERE, "Hear it → Own it.shortcut")
+COPIED = ["hearit.sh", "ytmusic.sh", "update_ytdlp.sh", "tag_m4a.py", "hearit.py", "find_python.sh", "ytprogress", "sounds/owned.wav", "sounds/owned2.wav"]
+OUT = os.path.join(HERE, "Grand Theft Audio (Redesign).shortcut")
 
 
 def read(name):
@@ -60,8 +60,9 @@ def stage(out):
     subprocess.run(["osacompile", "-x", "-o", os.path.join(out, "HearItOwnIt.scpt"), src], check=True)
 
     names = COPIED if build_ytprogress() else [n for n in COPIED if n != "ytprogress"]
-    for name in names:
-        shutil.copy2(os.path.join(HERE, name), out)
+    for name in names:  # keeps subfolders (sounds/), same layout as this folder
+        os.makedirs(os.path.dirname(os.path.join(out, name)), exist_ok=True)
+        shutil.copy2(os.path.join(HERE, name), os.path.join(out, name))
 
 
 def bundle() -> str:
@@ -69,7 +70,9 @@ def bundle() -> str:
     with tempfile.TemporaryDirectory() as staged:
         stage(staged)
         with tarfile.open(fileobj=buf, mode="w:gz") as tar:
-            for name in sorted(os.listdir(staged)):
+            names = sorted(os.path.relpath(os.path.join(d, f), staged)
+                           for d, _, files in os.walk(staged) for f in files)
+            for name in names:
                 info = tar.gettarinfo(os.path.join(staged, name), arcname=name)
                 info.uid = info.gid = 0
                 info.uname = info.gname = ""

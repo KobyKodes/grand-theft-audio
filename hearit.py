@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Helper for hearit.sh (the "Hear it → Own it" shortcut).
+"""Helper for hearit.sh (the "Grand Theft Audio" shortcut).
 
   hearit.py pick <artist> <title>
       Searches YouTube and prints the URL of the best upload of that song,
       favouring videos as long as the song is on iTunes (skips long intros, live
-      and extended versions).
+      and extended versions). With $HEARIT_HUD set, first puts the album cover on
+      the window (COVER <file>).
 
   hearit.py retag <path> <artist> <title>
       Writes Shazam's exact artist/title into a fresh download, adds the album,
@@ -18,6 +19,7 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
 from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -62,7 +64,29 @@ def score(entry: dict, artist: str, title: str, length=None) -> float:
     return s
 
 
+def fetch_cover(artist: str, title: str, dest: str, done: list):
+    """Saves the album cover (iTunes, 600px: it's for the window) to `dest`."""
+    url = fetch_release(artist, title).get("artwork")
+    data = fetch_artwork(url.replace("/1400x1400cc.", "/600x600cc.")) if url else None
+    if data:
+        with open(dest + ".tmp", "wb") as f:
+            f.write(data)
+        os.replace(dest + ".tmp", dest)  # whole or not at all, if the wait gives up on it
+        done.append(dest)
+
+
 def pick(artist: str, title: str):
+    # In the shortcut, the album cover goes on the window's record before the download
+    # starts. It's fetched alongside the search, in a daemon thread so a slow lookup is
+    # dropped instead of holding up the download.
+    hud = os.environ.get("HEARIT_HUD")
+    cover, cover_thread = [], None
+    if hud and os.path.exists(hud + ".cover.jpg"):  # a retry: already fetched
+        cover.append(hud + ".cover.jpg")
+    elif hud:
+        cover_thread = threading.Thread(target=fetch_cover, args=(artist, title, hud + ".cover.jpg", cover),
+                                        daemon=True)
+        cover_thread.start()
     with ThreadPoolExecutor(1) as pool:
         length_future = pool.submit(fetch_length, artist, title)
         out = subprocess.run(
@@ -70,6 +94,11 @@ def pick(artist: str, title: str):
             capture_output=True, text=True,
         )
         length = length_future.result()
+    if cover_thread:
+        cover_thread.join(timeout=3)
+    if cover:
+        with open(hud, "a", encoding="utf-8") as f:
+            f.write(f"COVER {cover[0]}\n")
     try:
         entries = [e for e in json.loads(out.stdout).get("entries") or [] if e.get("id")]
     except ValueError:

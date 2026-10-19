@@ -23,8 +23,11 @@ trap '' PIPE  # if the window is closed early, keep going
 
 # ---- progress window ----
 # ytprogress is a universal binary for macOS 12+ (Intel and Apple Silicon).
+shared=""
 if [[ -n "${HEARIT_HUD:-}" && -f "$HEARIT_HUD" && -z "${YTMUSIC_NO_HUD:-}" ]]; then
-  # The Shortcut's orb window is already up (hearit_listen.sh): keep using it.
+  # The Shortcut's window is already up (hearit_listen.sh): keep using it. It already has
+  # Shazam's names, and HearItOwnIt.scpt says when the song is in Music.
+  shared=1
   exec 3>> "$HEARIT_HUD"
 elif [[ -x "$here/ytprogress" && -z "${YTMUSIC_NO_HUD:-}" ]]; then
   mkfifo "$work/hud"
@@ -49,14 +52,14 @@ run_limited() {
   return $rc
 }
 
-hud "STATUS Looking up video…"
+hud "STATUS Looking up the video"
 
 # 1) Look the video up once. The saved info is reused for the download.
 #    If YouTube asks "confirm you're not a bot", retry using your Chrome login cookies.
 cookies=()
 if ! yt-dlp --no-playlist --no-warnings -J "$url" > "$info" 2> "$work/lookup.err"; then
   if grep -qiE "not a bot|cookies|sign in" "$work/lookup.err"; then
-    hud "STATUS Login check: click Always Allow if macOS asks…"
+    hud "STATUS YouTube wants a login check. Click Always Allow if macOS asks"
     cookies=(--cookies-from-browser chrome)
     if ! run_limited 90 yt-dlp --no-playlist --no-warnings "${cookies[@]}" -J "$url" > "$info" 2> "$work/lookup.err"; then
       cat "$work/lookup.err" >&2
@@ -68,19 +71,19 @@ if ! yt-dlp --no-playlist --no-warnings -J "$url" > "$info" 2> "$work/lookup.err
     exit 1
   fi
 fi
-hud "TITLE $("$py" -c 'import json,sys; print(json.load(open(sys.argv[1])).get("title",""))' "$info")"
+[[ -n "$shared" ]] || hud "TITLE $("$py" -c 'import json,sys; print(json.load(open(sys.argv[1])).get("title",""))' "$info")"
 
 # 2) Already downloaded? Fill in missing cover or lyrics and stop.
-hud "STATUS Checking your library…"
+hud "STATUS Checking your library"
 status="$("$py" "$here/tag_m4a.py" check "$info" "$dest")"
 if [[ "$status" != NEW ]]; then
-  hud "DONE Already downloaded"
+  [[ -n "$shared" ]] || hud "DONE Already downloaded"
   echo "$status"
   exit 0
 fi
 
 # 3) New song: download with live progress, then cover art, tags, lyrics.
-hud "STATUS Starting download…"
+hud "STATUS Starting the download"
 yt-dlp --load-info-json "$info" ${cookies[@]+"${cookies[@]}"} --no-mtime --no-warnings --quiet \
   --progress --newline \
   --progress-template 'download:PROG %(progress.downloaded_bytes)s %(progress.total_bytes)s %(progress.total_bytes_estimate)s %(progress.speed)s %(progress.eta)s' \
@@ -93,12 +96,12 @@ yt-dlp --load-info-json "$info" ${cookies[@]+"${cookies[@]}"} --no-mtime --no-wa
     if [[ "$line" == PROG\ * ]]; then
       hud "$line"
       read -r _ got total _ _ _ <<< "$line"
-      if [[ "$got" == "$total" ]]; then hud "STATUS Adding cover art…"; fi
+      if [[ "$got" == "$total" ]]; then hud "STATUS Adding cover art"; fi
     else
-      hud "STATUS Adding tags and lyrics…"
+      hud "STATUS Adding tags and lyrics"
       printf '%s\n' "$line"
     fi
   done \
 | "$py" "$here/tag_m4a.py" tag
 
-hud "DONE Added to your library"
+if [[ -n "$shared" ]]; then hud "STATUS Adding it to Music"; else hud "DONE Added to your library"; fi

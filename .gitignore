@@ -8,6 +8,7 @@ __pycache__/
 # Per-Mac state: recent playlists, queue bookkeeping, logs
 .recent_playlists
 .owned_next
+.last_playlists
 .hearit_queue*
 .ytdlp_checked
 .ytdlp_updating/

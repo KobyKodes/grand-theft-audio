@@ -32,7 +32,7 @@ check() {  # check <description> <command...>
   if "$@"; then echo "ok   - $what"; else echo "FAIL - $what"; fails=$((fails + 1)); fi
 }
 reset() { rm -rf "$HEARIT_QUEUE_ROOT" "$HEARIT_STATE_DIR" "$HEARIT_FAST_DIR" "$calls" "$HEARIT_QUEUE_LOCK"; mkdir -p "$queue"; : > "$calls"; }
-run() { bash "$here/hearit_queue.sh"; }
+run() { bash "$here/hear-it-later/hearit_queue.sh"; }
 
 # 1) a good song is processed, gets its playlist, and leaves the queue
 reset
@@ -114,9 +114,9 @@ check "…and isn't moved to Failed/" test ! -e "$failed/11.txt"
 
 # 9) Wi-Fi fast lane: hearit_now.sh drops the song in the fast folder
 reset
-printf '20260926-101500.txt\nSome Artist|ok fast|Mix\n' | bash "$here/hearit_now.sh" > /dev/null
+printf '20260926-101500.txt\nSome Artist|ok fast|Mix\n' | bash "$here/hear-it-later/hearit_now.sh" > /dev/null
 check "hearit_now writes the fast file" grep -qx 'Some Artist|ok fast|Mix' "$HEARIT_FAST_DIR/20260926-101500.txt"
-check "hearit_now rejects a bad name" bash -c "printf '../x.txt\nA|B|\n' | bash '$here/hearit_now.sh' 2> /dev/null; test \$? -eq 2"
+check "hearit_now rejects a bad name" bash -c "printf '../x.txt\nA|B|\n' | bash '$here/hear-it-later/hearit_now.sh' 2> /dev/null; test \$? -eq 2"
 # …it's processed before older iCloud songs, and its later iCloud copy is skipped
 printf 'Old|ok old|\n' > "$queue/20260926-090000.txt"
 run
@@ -138,7 +138,7 @@ check "…downloaded once" test "$(grep -c 'ok both' "$calls")" = 1
 # 10) several songs sent quickly over Wi-Fi all download, oldest first
 reset
 for i in 1 2 3; do
-  printf '20260926-12000%s.txt\nA|ok burst %s|\n' "$i" "$i" | bash "$here/hearit_now.sh" > /dev/null
+  printf '20260926-12000%s.txt\nA|ok burst %s|\n' "$i" "$i" | bash "$here/hear-it-later/hearit_now.sh" > /dev/null
 done
 run
 check "all 3 Wi-Fi songs downloaded" test "$(grep -c 'ok burst' "$calls")" = 3
@@ -151,14 +151,14 @@ reset
 cat > "$tmp/runner3" <<EOF
 #!/bin/bash
 if [[ "\$1" == "A|ok first" ]]; then
-  printf '20260926-130002.txt\nB|ok second|\n' | bash "$here/hearit_now.sh" > /dev/null
-  printf '20260926-130003.txt\nC|ok third|\n' | bash "$here/hearit_now.sh" > /dev/null
+  printf '20260926-130002.txt\nB|ok second|\n' | bash "$here/hear-it-later/hearit_now.sh" > /dev/null
+  printf '20260926-130003.txt\nC|ok third|\n' | bash "$here/hear-it-later/hearit_now.sh" > /dev/null
 fi
 printf '%s\t%s\n' "\$1" "\$2" >> "$calls"
 echo "DOWNLOADED|/x.m4a"
 EOF
 chmod +x "$tmp/runner3"
-printf '20260926-130001.txt\nA|ok first|\n' | bash "$here/hearit_now.sh" > /dev/null
+printf '20260926-130001.txt\nA|ok first|\n' | bash "$here/hear-it-later/hearit_now.sh" > /dev/null
 HEARIT_RUNNER="$tmp/runner3" run
 check "songs sent mid-download all processed" test "$(cut -f1 "$calls" | tr '\n' ',')" = "A|ok first,B|ok second,C|ok third,"
 

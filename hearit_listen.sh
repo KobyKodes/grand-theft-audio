@@ -1,5 +1,5 @@
 #!/bin/bash
-# Step of the "Hear it → Own it" shortcut that runs right before Recognize Music
+# Step of the "Grand Theft Audio" shortcut that runs right before Recognize Music
 # (which runs hidden). Opens the orb window in its listening state.
 #
 # The window follows a file (ytprogress --watch), so each later step can add lines to
@@ -8,14 +8,22 @@
 # CLOSE, or after a minute with nothing new. This step never stops the shortcut.
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
-dev="$HOME/Developer/Projects/Hear it, Own it"
+dev="$HOME/Developer/Projects/Grand Theft Audio"
 if [[ -f "$dev/hearit.sh" ]]; then
   app="$dev"
+  # Running from the source folder: if the window's source changed, rebuild it in the
+  # background for the next run (this run keeps the binary it has, so listening isn't held up).
+  if [[ "$app/ytprogress.swift" -nt "$app/ytprogress" ]] && xcrun --find swiftc > /dev/null 2>&1; then
+    ( tmp="$(mktemp -t ytprogress)" &&
+      xcrun swiftc -O "$app/ytprogress.swift" -o "$tmp" &&
+      codesign -fs - "$tmp" &&
+      mv -f "$tmp" "$app/ytprogress" ) < /dev/null > /dev/null 2>&1 &
+  fi
 else
-  app="$HOME/Library/Application Support/HearItOwnIt"
+  app="$HOME/Library/Application Support/HearItOwnItRedesign"
 fi
 
-dir="$HOME/Library/Caches/HearItOwnIt"
+dir="$HOME/Library/Caches/HearItOwnItRedesign"
 mkdir -p "$dir"
 rm -f "$dir/current"
 find "$dir" -name 'hud.*' -mtime +1 -delete 2> /dev/null
@@ -42,7 +50,7 @@ if [[ ${#owner[@]} -eq 0 ]]; then
 fi
 
 hud="$(mktemp "$dir/hud.XXXXXX")" || exit 0
-printf 'LISTEN Play the song near your Mac\n' > "$hud"
+printf 'LISTEN Play the song near your Mac.\n' > "$hud"
 # Detached, so it outlives this step.
 nohup "$app/ytprogress" --watch "$hud" ${owner[@]+"${owner[@]}"} < /dev/null > /dev/null 2>&1 &
 printf '%s\n' "$hud" > "$dir/current"

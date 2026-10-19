@@ -1,0 +1,24 @@
+# Built by build_hearit_shortcut.py / build_hearit_later.py
+/ytprogress
+*.scpt
+*.shortcut
+owned_chime.wav
+__pycache__/
+
+# Per-Mac state: recent playlists, queue bookkeeping, logs
+.recent_playlists
+.owned_next
+.hearit_queue*
+.ytdlp_checked
+.ytdlp_updating/
+
+# Your own iCloud folder IDs for Hear it Later (see build_hearit_later.py)
+hearit_later.local.json
+
+# Tools installed by hearit_setup.sh when run from this folder
+.venv/
+tools/
+bin/
+
+*.bak
+.DS_Store

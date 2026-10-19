@@ -1,0 +1,17 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shell syntax
+        run: for f in *.sh tests/*.sh; do bash -n "$f"; done
+      - name: Python syntax
+        run: python3 -m py_compile *.py marketing/*.py marketing/icon/*.py
+      - name: Queue tests
+        run: bash tests/test_hearit_queue.sh

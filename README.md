@@ -1,10 +1,19 @@
 <p align="center">
-  <img src="brand/thumbnail.png" alt="Grand Theft Audio" width="420">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+    <img src="assets/logo.svg" alt="Grand Theft Audio" width="420">
+  </picture>
 </p>
 
 # Grand Theft Audio
 
 **Hear a song. It's in your Music library.**
+
+<p align="center">
+  <a href="assets/preview.mp4"><img src="assets/preview.gif" alt="Grand Theft Audio in action: the listening cloud hears a song, flies into the notch, skips the live, remix and karaoke uploads, takes a playlist and finishes the record" width="100%"></a>
+  <br>
+  <sub>21 seconds of what it does. <a href="assets/preview.mp4">Watch it with sound</a>.</sub>
+</p>
 
 A macOS Shortcut that listens to whatever's playing around you, recognizes it with
 Shazam, finds the best upload of that song on YouTube, downloads it, tags it
@@ -145,6 +154,7 @@ Shortcut ─┬─ hearit_setup.sh     unpack the scripts, install tools the fir
 | `hear-it-later/` | [Hear it Later](hear-it-later/README.md): the queue, the Wi-Fi fast lane, the agent installer and the iPhone shortcut builder |
 | `sounds/` | The success sounds (`owned.wav`, `owned2.wav`, alternating) |
 | `extras/` | `backfill_tags.py` and `make_chime.py` (see [More tools](#more-tools)) |
+| `assets/` | The logo and the preview video used in this README |
 | `brand/` | Logo files, icons and [usage guidelines](brand/GUIDELINES.md) |
 
 ## Development

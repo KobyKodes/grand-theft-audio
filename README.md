@@ -154,8 +154,7 @@ Shortcut ─┬─ hearit_setup.sh     unpack the scripts, install tools the fir
 | `hear-it-later/` | [Hear it Later](hear-it-later/README.md): the queue, the Wi-Fi fast lane, the agent installer and the iPhone shortcut builder |
 | `sounds/` | The success sounds (`owned.wav`, `owned2.wav`, alternating) |
 | `extras/` | `backfill_tags.py` and `make_chime.py` (see [More tools](#more-tools)) |
-| `assets/` | The logo and the preview video used in this README |
-| `brand/` | Logo files, icons and [usage guidelines](brand/GUIDELINES.md) |
+| `assets/` | The logo (light and dark) and the preview video used in this README |
 
 ## Development
 
